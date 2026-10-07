@@ -22,7 +22,6 @@ import com.chunkworks.rotorcraft.SlungLoad;
 import com.chunkworks.rotorcraft.api.AircraftProfile;
 import com.chunkworks.rotorcraft.api.Rotorcraft;
 import com.chunkworks.rotorcraft.domain.FlightInput;
-import com.chunkworks.rotorcraft.domain.Wear;
 import com.chunkworks.vanillawheels.ModContent;
 import com.chunkworks.vanillawheels.Vehicle;
 import com.chunkworks.vanillawheels.api.VanillaWheels;
@@ -249,7 +248,7 @@ public final class HueyGameTests {
                 .thenIdle(5)
                 .thenExecute(() -> {
                     helper.assertTrue(a.position().distanceTo(start) > 12.0, "it went somewhere: " + a.position().distanceTo(start));
-                    helper.assertValueEqual(a.condition(), Wear.FULL_CONDITION, "it touched nothing hard and landed soft:" + trace);
+                    helper.assertValueEqual(a.condition(), com.chunkworks.vanillawheels.domain.Condition.MAX, "it touched nothing hard and landed soft:" + trace);
                     helper.assertValueEqual(lowest[0], health, "nobody aboard was hurt:" + trace);
                 })
                 .thenSucceed();
@@ -309,7 +308,7 @@ public final class HueyGameTests {
                     a.setScriptedFlight(fly(0, 0, 0));
                     a.hookKey(pilot);
                     helper.assertTrue(a.trailer() == null, "let go on the ground");
-                    helper.assertValueEqual(box[0].condition(), Wear.FULL_CONDITION, "set down whole:" + trace);
+                    helper.assertValueEqual(box[0].condition(), com.chunkworks.vanillawheels.domain.Condition.MAX, "set down whole:" + trace);
                     helper.assertTrue(cow[0].getVehicle() == box[0], "the cow still aboard");
                     helper.assertValueEqual(cow[0].getHealth(), health[0], "and unhurt:" + trace);
                     helper.assertValueEqual(box[0].getItem(0).getCount(), 10, "the apples all there");
