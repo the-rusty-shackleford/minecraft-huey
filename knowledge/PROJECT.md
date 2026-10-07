@@ -13,7 +13,11 @@ A life-size Bell UH-1H for Rotorcraft (Rusty, 2026-10-06): data only, nesting Ro
 nests Vanilla Wheels). The plan is `~/.claude/plans/i-want-to-add-curious-locket.md`; D-0001 is the
 model, the origin and the sound.
 
-## Status: 1.0.0 released 2026-10-07 in pack 1.75.0
+## Status: 1.0.0 released 2026-10-07 in pack 1.75.0; 1.1.0 built, not released
+
+- **1.1.0, the baggage store** (D-0002; Rusty, after flying it: storage "like the cars", "a double
+  chest would be nice"): six rows hidden in the boom, a hatch on each side, a hit box over them; the
+  inventory key opens it from a seat. Waits on Rusty's look at the photos, then a release on his word.
 
 - Gate: 5 GameTests and the booth (10 checks) green (no JUnit: no Java beyond the tests).
 - Built: the model, both profiles (with Rotorcraft's hull and rotor radii), the chassis recipe and

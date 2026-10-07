@@ -50,6 +50,16 @@ out of fuel in the air it glides down gently on its spinning rotor.
 
 ![The Huey hovering](img/hover.webp)
 
+## Its baggage store
+
+Behind the cabin, in the front of the tail boom, is a store as big as a **double chest**. Right-click
+the **hatch** on either side of the boom to open it, or press your **inventory key** (E) while you
+are aboard, as in the cars.
+
+![The baggage hatch on the boom](img/hatch.webp)
+
+![The store, opened from the pilot's seat](img/store.webp)
+
 ## Carrying the Sling Container
 
 Load the container on the ground (animals in through its doors, things in its two chests), hover

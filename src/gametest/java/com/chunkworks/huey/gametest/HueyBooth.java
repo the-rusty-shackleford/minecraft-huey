@@ -206,6 +206,31 @@ public final class HueyBooth {
         return a.position().add(a.rotate(new com.chunkworks.vanillawheels.domain.Vec(0.0, 1.5, -2.7)));
     }
 
+    /** effects: returns the middle of the left baggage hatch, on the boom's skin over the hidden store */
+    private static Vec3 hatch(Aircraft a) {
+        com.chunkworks.vanillawheels.api.VehicleProfile p = a.profile();
+        com.chunkworks.vanillawheels.domain.Vec store = p.localBlocks(p.storage().orElseThrow().chests().get(0).at());
+        return a.position().add(a.rotate(new com.chunkworks.vanillawheels.domain.Vec(0.49, 1.36, store.z())));
+    }
+
+    /**
+     * effects: starts devtools/booth/xkey.py pressing ({@code down}) or letting go ({@code up}) of
+     * {@code keysym} on this client's display, and returns it; null, with a FAIL line, if it would
+     * not start. The helper refuses a display with a window manager, so it never types on a desktop.
+     */
+    @org.jetbrains.annotations.Nullable
+    private static Process xkey(String action, String keysym) {
+        java.nio.file.Path script = java.nio.file.Path.of(System.getProperty("user.dir"), "..", "..", "devtools", "booth", "xkey.py").normalize();
+        java.nio.file.Path uv = java.nio.file.Path.of(System.getProperty("user.home"), ".local", "bin", "uv");
+        try {
+            return new ProcessBuilder(java.nio.file.Files.isExecutable(uv) ? uv.toString() : "uv", "run", "--no-project", "--with", "python-xlib",
+                    "python", script.toString(), action, keysym).inheritIO().start();
+        } catch (java.io.IOException e) {
+            LOG.error("booth: FAIL the key helper starts ({} {}) -- {}", action, keysym, e.toString());
+            return null;
+        }
+    }
+
     /** effects: aims the booth's player from {@code offset} (blocks, the world's axes) off the Huey's middle at it */
     private static void shot(ServerPlayer sp, double dx, double dy, double dz) {
         withHuey(sp, a -> {
@@ -260,7 +285,38 @@ public final class HueyBooth {
                 aim(sp, nose.add(3.6, 1.4, -3.4), nose);
             });
         }));
-        s.add(new Step(t += SETTLE, () -> shoot(mc, "booth-nose")));
+        s.add(new Step(t += SETTLE, () -> {
+            shoot(mc, "booth-nose");
+            // The baggage hatch on the boom's left (D-0002), close up from beside it.
+            onServer(mc, sp -> withHuey(sp, a -> aim(sp, hatch(a).add(a.rotate(new com.chunkworks.vanillawheels.domain.Vec(2.2, 0.15, 0.0))), hatch(a))));
+        }));
+        s.add(new Step(t += SETTLE, () -> {
+            shoot(mc, "booth-hatch");
+            // A click on the hatch, from where the player stands: the store behind it opens.
+            onServer(mc, sp -> withHuey(sp, a -> a.interactAt(sp, hatch(a).subtract(a.position()), InteractionHand.MAIN_HAND)));
+        }));
+        s.add(new Step(t += SETTLE / 2, () -> {
+            shoot(mc, "booth-store");
+            verdict("a click on the hatch opens the store's six rows", () -> mc.screen instanceof net.minecraft.client.gui.screens.inventory.ContainerScreen c
+                    && c.getMenu().getRowCount() == 6 ? null : "screen " + mc.screen);
+            onServer(mc, sp -> {
+                sp.closeContainer();
+                withHuey(sp, a -> sp.startRiding(a, true));
+            });
+        }));
+        // At the controls, the inventory key pressed for real (devtools/booth/xkey.py): the store, as a car's chest.
+        s.add(new Step(t += 20, () -> xkey("down", "e")));
+        s.add(new Step(t += 10, () -> xkey("up", "e")));
+        s.add(new Step(t += 50, () -> {
+            shoot(mc, "booth-store-from-seat");
+            verdict("aboard, the inventory key opens the store", () -> mc.player != null && mc.player.getVehicle() instanceof Aircraft
+                    && mc.screen instanceof net.minecraft.client.gui.screens.inventory.ContainerScreen c && c.getMenu().getRowCount() == 6
+                    ? null : "riding " + (mc.player == null ? null : mc.player.getVehicle()) + ", screen " + mc.screen);
+            onServer(mc, sp -> {
+                sp.closeContainer();
+                sp.stopRiding();
+            });
+        }));
         // --- the cabin with eight people aboard ---------------------------------------------------
         s.add(new Step(t += 2, () -> onServer(mc, sp -> {
             ServerLevel level = sp.serverLevel();

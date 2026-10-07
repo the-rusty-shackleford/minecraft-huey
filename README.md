@@ -5,7 +5,9 @@ the helicopter protocol layered on [Vanilla Wheels](https://github.com/the-rusty
 on NeoForge 1.21.1. One block a metre: 12.6 blocks nose to tail, a two-bladed rotor 14.7 across, a
 tail rotor on the fin's left. A pilot (the right-hand seat, as in the Army's Hueys), a copilot and
 six on red troop seats in an open cabin, the cargo doors slid back; skids; a cargo hook under the
-belly for a sling load; a mount for the crop sprayer. There is no Java in it: the helicopter is two
+belly for a sling load; a mount for the crop sprayer; a baggage store of a double chest's six rows
+hidden in the tail boom, opened by right-clicking the hatch on either side of the boom or with the
+inventory key from any seat (D-0002). There is no Java in it: the helicopter is two
 datapack profiles, a Blockbench mesh and a sound, and the protocols do the rest, so flying, the
 sling and the sprayer are documented in Rotorcraft's README and the vehicle's keys, fuel, paint and
 repairs in Vanilla Wheels'.

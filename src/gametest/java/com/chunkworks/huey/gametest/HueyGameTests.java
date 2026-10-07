@@ -74,8 +74,9 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * The Huey on a headless server: its two profiles make it an aircraft of eight seats on skids,
  * flown by Rotorcraft; its chassis crafts from six steel blocks and three glass panes; the lift
  * builds it from the chassis and an engine and paints it; flown by script it climbs, crosses the
- * pad, turns and lands softly with nobody hurt; and it carries the Sling Container on its hook, a
- * cow and apples aboard, and sets it down whole. The template is encased in barriers: every flight
+ * pad, turns and lands softly with nobody hurt; it carries the Sling Container on its hook, a
+ * cow and apples aboard, and sets it down whole; and its baggage store opens from either hatch and
+ * from the seat. The template is encased in barriers: every flight
  * keeps the whole hull, nine metres of tail behind the mast, inside its 48 blocks.
  */
 @GameTestHolder("huey")
@@ -314,6 +315,66 @@ public final class HueyGameTests {
                     helper.assertValueEqual(box[0].getItem(0).getCount(), 10, "the apples all there");
                 })
                 .thenSucceed();
+    }
+
+    /**
+     * The baggage store (D-0002): a double chest's six rows hidden in the boom. A click on either
+     * hatch, sent as the client sends it, opens it; a rider's inventory key opens it; a click on the
+     * cabin still boards, the store far beyond its reach.
+     */
+    @GameTest(template = "pad", timeoutTicks = 60)
+    public void itsBaggageStoreOpensFromEitherHatchAndFromTheSeat(GameTestHelper helper) {
+        floor(helper);
+        Vehicle v = spawn(helper, HUEY, 24.5, 24.5, 30.0f);
+        VehicleProfile p = v.profile();
+        helper.assertTrue(p.storage().isPresent() && p.storage().get().chests().size() == 1, "one store");
+        helper.assertValueEqual(p.storage().get().chests().get(0).rows(), 6, "a double chest's six rows");
+        Vec3 store = v.position().add(v.rotate(p.localBlocks(p.storage().get().chests().get(0).at())));
+        ServerPlayer porter = player(helper, "porter", new Vec3(2.5, FLOOR, 2.5));
+        helper.runAtTickTime(5, () -> {
+            for (int side : new int[] {1, -1}) {
+                // Standing beside the hatch, 1.4 out from the boom's middle, looking at its middle.
+                Vec3 across = v.rotate(new com.chunkworks.vanillawheels.domain.Vec(side, 0.0, 0.0));
+                Vec3 feet = new Vec3(store.x + across.x * 1.4, v.getY(), store.z + across.z * 1.4);
+                porter.teleportTo(feet.x, feet.y, feet.z);
+                Vec3 eye = porter.getEyePosition();
+                Vec3 hatch = new Vec3(store.x + across.x * 0.49, v.getY() + 1.36, store.z + across.z * 0.49);
+                Vec3 inside = hatch.add(hatch.subtract(eye).normalize().scale(0.3));
+                Vehicle.Part part = null;
+                Vec3 hit = null;
+                for (var e : v.getParts()) {
+                    if (e instanceof Vehicle.Part candidate) {
+                        var clip = candidate.getBoundingBox().clip(eye, inside);
+                        if (clip.isPresent() && (hit == null || clip.get().distanceToSqr(eye) < hit.distanceToSqr(eye))) {
+                            part = candidate;
+                            hit = clip.get();
+                        }
+                    }
+                }
+                helper.assertTrue(part != null, "a hit box covers the " + (side > 0 ? "left" : "right") + " hatch");
+                helper.assertTrue(porter.canInteractWithEntity(part.getBoundingBox(), 3.0), "within the server's reach");
+                porter.connection.handleInteract(net.minecraft.network.protocol.game.ServerboundInteractPacket.createInteractionPacket(
+                        part, false, InteractionHand.MAIN_HAND, hit.subtract(part.position())));
+                helper.assertTrue(porter.containerMenu instanceof net.minecraft.world.inventory.ChestMenu m && m.getRowCount() == 6,
+                        "the " + (side > 0 ? "left" : "right") + " hatch opens six rows: " + porter.containerMenu);
+                porter.closeContainer();
+            }
+            // The cabin's own box: the click boards (the Huey is whole), the store out of reach.
+            Vec3 cabin = v.position().add(v.rotate(p.localBlocks(p.body().parts().get(0).at())));
+            porter.teleportTo(cabin.x + 2.0, v.getY(), cabin.z);
+            porter.connection.handleInteract(net.minecraft.network.protocol.game.ServerboundInteractPacket.createInteractionPacket(
+                    v, false, InteractionHand.MAIN_HAND, Vec3.ZERO));
+            porter.connection.handleInteract(net.minecraft.network.protocol.game.ServerboundInteractPacket.createInteractionPacket(
+                    v, false, InteractionHand.MAIN_HAND));
+            helper.assertTrue(porter.getVehicle() == v, "a click on the body still boards");
+            helper.assertTrue(!(porter.containerMenu instanceof net.minecraft.world.inventory.ChestMenu), "and opens no store");
+            // Aboard, the inventory key: the store, as a car's first chest.
+            v.openCustomInventoryScreen(porter);
+            helper.assertTrue(porter.containerMenu instanceof net.minecraft.world.inventory.ChestMenu m && m.getRowCount() == 6,
+                    "a rider's inventory key opens the store: " + porter.containerMenu);
+            porter.connection.disconnect(net.minecraft.network.chat.Component.literal("test complete"));
+            helper.succeed();
+        });
     }
 
     /** A server player with a connection that goes nowhere, so the lift's menu takes the real path. */

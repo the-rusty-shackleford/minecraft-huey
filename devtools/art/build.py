@@ -344,10 +344,17 @@ def cowling(h: Huey) -> None:
 
 
 BOOM = (6.76, 11.30)
+# The baggage store in the boom's forward end, a double chest's room (Rusty, 2026-10-07, D-0002): a
+# hatch on each side, where the skin is flat (the slid cargo doors cover the fuselage ahead of it),
+# and the chest out of sight inside the boom.
+HATCH_S, HATCH_Y = (6.88, 7.58), (1.06, 1.66)
+STORE = (1.10, 7.23)        # the hidden chest's floor and its middle along the boom
+STORE_SCALE = 0.45          # 0.9 long, 0.45 across, 0.39 high: inside the boom's 0.92 across
 
 
 def boom(h: Huey) -> None:
-    """The tail boom in fine steps, the elevator through it, the fin and the gearbox on top."""
+    """The tail boom in fine steps, the baggage hatches, the elevator through it, the fin and the
+    gearbox on top."""
     n = 16
     for i in range(n):
         s0 = BOOM[0] + (BOOM[1] - BOOM[0]) * i / n
@@ -360,6 +367,17 @@ def boom(h: Huey) -> None:
         h.box("paint/boom", f"core{i:02d}", -hw, hw, bot + r, top - r, s0, s1 + 0.005, "paint")
         h.box("paint/boom", f"belly{i:02d}", -(hw - r), hw - r, bot, bot + r, s0, s1 + 0.005, "paint")
         h.box("paint/boom", f"back{i:02d}", -(hw - r), hw - r, top - r, top, s0, s1 + 0.005, "paint")
+    # The baggage hatch on each side: a dark frame standing a pixel or less proud of the skin, which
+    # narrows under it from 0.49 to 0.46, and a latch at its aft edge. The bars meet without
+    # overlapping, so no two faces lie in one plane.
+    (a, b), (lo, hi) = HATCH_S, HATCH_Y
+    t = 1 / PX
+    out = (0.44, 0.52)
+    h.pair("hatch", "frame_top", *out, hi - t, hi, a, b, "dark")
+    h.pair("hatch", "frame_low", *out, lo, lo + t, a, b, "dark")
+    h.pair("hatch", "frame_fore", *out, lo + t, hi - t, a, a + t, "dark")
+    h.pair("hatch", "frame_aft", *out, lo + t, hi - t, b - t, b, "dark")
+    h.pair("hatch", "latch", 0.44, 0.55, (lo + hi) / 2 - 0.04, (lo + hi) / 2 + 0.04, b - 0.18, b - 0.08, "metal")
     # The synchronized elevator, through the boom.
     h.box("paint/elevator", "elevator", -1.42, 1.42, 1.44, 1.53, 9.20, 9.95, "paint")
     # The fin: swept back, its leading edge from the boom's top to the gearbox, its trailing edge
@@ -548,9 +566,11 @@ def vehicle_profile() -> dict:
         "body": {
             # The cabin's width and height; the length is the hull's, nose to tail.
             "width": 2.6, "length": 12.6, "height": 2.65,
-            # The four boxes that take clicks and hits beyond the body's own (which stands under the mast).
+            # The five boxes that take clicks and hits beyond the body's own (which stands under the
+            # mast); the third covers the baggage hatches, so a click on one reaches the store.
             "parts": [{"at": v(0, BELLY_Y, 1.15), "width": 2.3, "height": 1.85},
                       {"at": v(0, 0.50, 5.70), "width": 1.9, "height": 1.80},
+                      {"at": v(0, 0.84, STORE[1]), "width": 1.0, "height": 1.00},
                       {"at": v(0, 0.95, 8.60), "width": 1.0, "height": 1.00},
                       {"at": v(0, 1.30, 11.90), "width": 1.3, "height": 1.70}],
         },
@@ -565,6 +585,9 @@ def vehicle_profile() -> dict:
         "climb": 0.5,
         "mass": 2.2,
         "fuel": {"capacity": 36000},
+        # The baggage store: a double chest's six rows, hidden in the boom, its long side along it.
+        # A click on either hatch reaches it through the boom's hit box; a rider's inventory key opens it.
+        "storage": {"chests": [{"at": v(0, STORE[0], STORE[1]), "yaw": 90, "scale": STORE_SCALE, "rows": 6}]},
         "gauges": [
             {"kind": "speed", "part": {"group": "needle_speed"}, "pivot": v(-0.38, 1.33, COCKPIT + 0.11),
              "axis": [0, 0, 1], "zero": -2.094, "sweep": 4.189},
