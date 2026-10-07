@@ -153,10 +153,10 @@ tasks.named('runPhotoBooth') { task ->
         if (!failures.isEmpty()) {
             throw new GradleException("booth: ${failures.size()} failed check(s):\n" + failures.join('\n'))
         }
-        if (!(text =~ /booth: PASS/)) {
-            throw new GradleException("booth: no verdict in ${logFile} -- the booth never ran")
+        if (!text.contains('booth: PASS all checks ran')) {
+            throw new GradleException("booth: missing completion marker in ${logFile} -- the booth never finished")
         }
-        task.logger.lifecycle("booth: " + (text =~ /booth: PASS.*/)[0])
+        task.logger.lifecycle("booth: " + text.readLines().count { it.contains('booth: PASS') } + " checks passed")
     }
 }
 if (!project.hasProperty('skipBooth') && !project.hasProperty('skipGameTests')) {

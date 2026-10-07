@@ -1,0 +1,11 @@
+{
+  "shots": [
+    {"from": "run/booth/screenshots/booth-threequarter.png", "to": "img/huey.webp", "crop": [0, 130, 1280, 650]},
+    {"from": "run/booth/screenshots/booth-cabin-front.png", "to": "img/cabin.webp"},
+    {"from": "run/booth/screenshots/booth-cockpit.png", "to": "img/cockpit.webp"},
+    {"from": "run/booth/screenshots/booth-hover.png", "to": "img/hover.webp"},
+    {"from": "run/booth/screenshots/booth-sling.png", "to": "img/sling.webp"},
+    {"from": "run/booth/screenshots/booth-spraying.png", "to": "img/spraying.webp"},
+    {"from": "run/booth/screenshots/booth-red.png", "to": "img/painted.webp", "crop": [0, 130, 1280, 650]}
+  ]
+}

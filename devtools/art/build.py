@@ -50,6 +50,7 @@ def make_atlas() -> bbgen.TexelAtlas:
     a.material("glass", (172, 206, 212), w=64, h=32, grain=6, alpha=110)
     a.material("blade", (46, 48, 52), w=128, h=16, grain=6)
     a.material("paint_trim", (204, 204, 198), w=32, h=32, grain=8)
+    a.material("frame", (58, 62, 46), w=32, h=32, grain=8)
     a.material("glass_green", (118, 192, 150), w=32, h=32, grain=6, alpha=130)
     a.material("chin", (44, 58, 66), w=32, h=32, grain=6)
     a.material("metal", (140, 144, 150), w=32, h=32, grain=10)
@@ -66,6 +67,17 @@ def make_atlas() -> bbgen.TexelAtlas:
     a.material("webbing", (176, 48, 38), w=32, h=32, grain=10, pattern=weave)
     a.material("seat", (72, 76, 72), w=32, h=32, grain=8)
     a.material("panel", (30, 32, 34), w=32, h=32, grain=6)
+
+    def dials(x, y, c):
+        # A grid of instrument faces, one every five texels: a grey rim round a black face, a white tick.
+        dx, dy = x % 5 - 2, y % 5 - 2
+        if max(abs(dx), abs(dy)) == 2:
+            return c
+        if max(abs(dx), abs(dy)) == 1:
+            return (150, 152, 150) if (dx, dy) != (1, -1) else (226, 226, 214)
+        return (12, 12, 14)
+
+    a.material("instruments", (30, 32, 34), w=64, h=16, grain=4, pattern=dials, scale=2.0)
     a.material("gauge", (14, 14, 16), w=16, h=16, grain=4)
     a.material("needle", (244, 244, 232), w=16, h=16, grain=2)
     a.material("lamp", (250, 246, 220), w=16, h=16, grain=4)
@@ -110,7 +122,7 @@ class Huey:
         else:
             self.m.cube(folder, name, frm, to, mat, rotation=(0, 0, angle), origin=origin)
 
-    def along(self, folder, name, a, b, x0, x1, t, mat, mirror=False, grow=None):
+    def along(self, folder, name, a, b, x0, x1, t, mat, mirror=False, grow=None, faces=None):
         """A plate on the side view's segment from a = (s, y) to b (metres), across x0..x1, t thick."""
         grow = t / 2 if grow is None else grow
         ds, dy = b[0] - a[0], b[1] - a[1]
@@ -122,9 +134,9 @@ class Huey:
         to = [p(x1), p(cy + t / 2), z(cs - length / 2)]
         origin = [p((x0 + x1) / 2), p(cy), z(cs)]
         if mirror:
-            self.m.mirror_x(folder, name, frm, to, mat, rotation=(angle, 0, 0), origin=origin)
+            self.m.mirror_x(folder, name, frm, to, mat, rotation=(angle, 0, 0), origin=origin, faces=faces)
         else:
-            self.m.cube(folder, name, frm, to, mat, rotation=(angle, 0, 0), origin=origin)
+            self.m.cube(folder, name, frm, to, mat, rotation=(angle, 0, 0), origin=origin, faces=faces)
 
     def octagon(self, folder, name, centre, apothem, s0, s1, mat):
         """A regular octagonal prism along the body from station s0 to s1, about centre = (x, y): four
@@ -295,16 +307,21 @@ def windshield(h: Huey) -> None:
     def at(y):
         return (low[0] + (y - low[1]) / (high[1] - low[1]) * (high[0] - low[0]), y)
 
-    # In three bands, each as wide as the cabin is at its height, so no corner pokes out of the roof.
+    # In four bands, each as wide as the cabin is at its height, so no corner pokes out of the roof.
+    # They meet edge to edge with no end faces, so no line runs across the glass where they join.
     bands = ((low[1], 1.70, 1.10), (1.70, 1.92, WAIST - 0.03), (1.92, 2.08, 1.07), (2.08, high[1], 0.96))
+    joint = {"north": None, "south": None}
     for i, (ya, yb, hw) in enumerate(bands):
-        h.along("glass/windshield", f"pane{i}_l", at(ya), at(yb), 0.05, hw, 0.04, "glass", grow=0.0)
-        h.along("glass/windshield", f"pane{i}_r", at(ya), at(yb), -hw, -0.05, 0.04, "glass", grow=0.0)
-    h.along("paint/cockpit/frame", "post", low, high, -0.05, 0.05, 0.08, "paint_trim")
+        h.along("glass/windshield", f"pane{i}_l", at(ya), at(yb), 0.05, hw, 0.04, "glass", grow=0.0, faces=joint)
+        h.along("glass/windshield", f"pane{i}_r", at(ya), at(yb), -hw, -0.05, 0.04, "glass", grow=0.0, faces=joint)
+    # The post is hidden from the riders' own eyes; Vanilla Wheels cuts cockpit faces before paint, so it
+    # is never dyed and is drawn dark olive whatever the body's colour.
+    h.along("cockpit/frame", "post", low, high, -0.05, 0.05, 0.08, "frame")
     h.along("paint/windshield", "sill", (low[0] - 0.03, low[1] - 0.01), (low[0] + 0.03, low[1] + 0.03), -1.10, 1.10, 0.05, "paint")
     # The corner windows, upright in the sides' plane, from the slant back to the doors.
     for i, (ya, yb) in enumerate(((low[1], 1.66), (1.66, 1.80), (1.80, 1.92))):
-        h.pair("glass/windshield", f"corner{i}", WAIST - 0.03, WAIST - 0.01, ya, yb, at(yb)[0] - 0.02, PILOT_DOOR[0], "glass")
+        h.pair("glass/windshield", f"corner{i}", WAIST - 0.03, WAIST - 0.01, ya, yb, at(yb)[0] - 0.02, PILOT_DOOR[0], "glass",
+               faces={"up": None, "down": None})
     # The green windows in the roof over the pilots.
     h.pair("glass/roof", "eyebrow", 0.08, 0.86, ROOF_Y - 0.05, ROOF_Y + 0.01, high[0] + 0.04, 1.74, "glass_green")
     h.box("paint/roof", "eyebrow_post", -0.08, 0.08, ROOF_Y - 0.06, ROOF_Y + 0.02, high[0] - 0.02, 1.74, "paint")
@@ -463,7 +480,8 @@ def interior(h: Huey) -> None:
     """The instrument panel and its two gauges, the pedestal, the pilots' seats, and the troop
     seats: a bench across the bulkhead and a row facing forward behind the pilots, red webbing on
     tubes."""
-    h.box("panel", "panel", -0.98, 0.98, 1.10, 1.54, COCKPIT, COCKPIT + 0.10, "panel")
+    # The panel's face toward the pilots (north, -Z: aft) is its instruments.
+    h.box("panel", "panel", -0.98, 0.98, 1.10, 1.54, COCKPIT, COCKPIT + 0.10, "panel", faces={"north": "instruments"})
     h.box("panel", "shield", -1.00, 1.00, 1.54, 1.60, COCKPIT - 0.04, COCKPIT + 0.26, "panel")
     h.box("panel", "pedestal", -0.16, 0.16, FLOOR_Y, 1.12, COCKPIT + 0.05, 1.70, "panel")
     for kind, x in (("speed", -0.38), ("fuel", -0.68)):
