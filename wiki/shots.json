@@ -8,6 +8,6 @@
     {"from": "run/booth/screenshots/booth-spraying.png", "to": "img/spraying.webp"},
     {"from": "run/booth/screenshots/booth-red.png", "to": "img/painted.webp", "crop": [0, 130, 1280, 650]},
     {"from": "run/booth/screenshots/booth-hatch.png", "to": "img/hatch.webp"},
-    {"from": "run/booth/screenshots/booth-store-from-seat.png", "to": "img/store.webp"}
+    {"from": "run/booth/screenshots/booth-store-from-seat.png", "to": "img/store.webp", "crop": [375, 27, 903, 690], "screen": true}
   ]
 }
