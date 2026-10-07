@@ -1,0 +1,226 @@
+{
+  "mesh": "huey:huey",
+  "scale": 0.0625,
+  "handedness": "right",
+  "body": {
+    "width": 2.6,
+    "length": 12.6,
+    "height": 2.65,
+    "parts": [
+      {
+        "at": [
+          0.0,
+          7.04,
+          38.72
+        ],
+        "width": 2.3,
+        "height": 1.85
+      },
+      {
+        "at": [
+          0.0,
+          8.0,
+          -34.08
+        ],
+        "width": 1.9,
+        "height": 1.8
+      },
+      {
+        "at": [
+          0.0,
+          15.2,
+          -80.48
+        ],
+        "width": 1.0,
+        "height": 1.0
+      },
+      {
+        "at": [
+          0.0,
+          20.8,
+          -133.28
+        ],
+        "width": 1.3,
+        "height": 1.7
+      }
+    ]
+  },
+  "seats": [
+    {
+      "at": [
+        -8.8,
+        15.04,
+        28.0
+      ],
+      "driver": true
+    },
+    {
+      "at": [
+        8.8,
+        15.04,
+        28.0
+      ]
+    },
+    {
+      "at": [
+        -12.0,
+        15.04,
+        5.92
+      ]
+    },
+    {
+      "at": [
+        0.0,
+        15.04,
+        5.92
+      ]
+    },
+    {
+      "at": [
+        12.0,
+        15.04,
+        5.92
+      ]
+    },
+    {
+      "at": [
+        -12.0,
+        15.04,
+        -9.6
+      ]
+    },
+    {
+      "at": [
+        0.0,
+        15.04,
+        -9.6
+      ]
+    },
+    {
+      "at": [
+        12.0,
+        15.04,
+        -9.6
+      ]
+    }
+  ],
+  "wheels": {
+    "radius": 1,
+    "drawn": false,
+    "positions": [
+      {
+        "forward": 36.32,
+        "right": -20.8
+      },
+      {
+        "forward": 36.32,
+        "right": 20.8
+      },
+      {
+        "forward": -20.48,
+        "right": -20.8
+      },
+      {
+        "forward": -20.48,
+        "right": 20.8
+      }
+    ]
+  },
+  "engine": {
+    "max_speed": 1.4,
+    "acceleration": 0.03,
+    "reverse_speed": 0.4,
+    "brake": 0.04
+  },
+  "climb": 0.5,
+  "mass": 2.2,
+  "fuel": {
+    "capacity": 36000
+  },
+  "gauges": [
+    {
+      "kind": "speed",
+      "part": {
+        "group": "needle_speed"
+      },
+      "pivot": [
+        -6.08,
+        21.28,
+        40.64
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "zero": -2.094,
+      "sweep": 4.189
+    },
+    {
+      "kind": "fuel",
+      "part": {
+        "group": "needle_fuel"
+      },
+      "pivot": [
+        -10.88,
+        21.28,
+        40.64
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "zero": -2.094,
+      "sweep": 4.189
+    }
+  ],
+  "headlights": {
+    "at": [
+      [
+        4.8,
+        5.76,
+        44.32
+      ],
+      [
+        -4.8,
+        5.76,
+        39.52
+      ]
+    ],
+    "part": {
+      "group": "lenses"
+    },
+    "range": 16
+  },
+  "paint": {
+    "part": {
+      "group": "paint"
+    },
+    "default": "green",
+    "factory": "#4f5536"
+  },
+  "glass": {
+    "group": "glass"
+  },
+  "cockpit": {
+    "group": "cockpit"
+  },
+  "sounds": {
+    "engine": "huey:rotor",
+    "pitch": [
+      0.62,
+      1.04
+    ],
+    "volume": [
+      0.35,
+      1.0
+    ]
+  },
+  "repair": {
+    "ingredient": {
+      "tag": "c:ingots/steel"
+    },
+    "full_cost": 24
+  }
+}

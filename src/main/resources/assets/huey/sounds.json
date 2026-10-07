@@ -1,0 +1,10 @@
+{
+  "rotor": {
+    "sounds": [
+      {
+        "name": "huey:rotor",
+        "attenuation_distance": 64
+      }
+    ]
+  }
+}

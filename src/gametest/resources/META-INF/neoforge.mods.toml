@@ -1,0 +1,24 @@
+# The gametests and the photo booth, as a mod of their own; never shipped.
+modLoader="javafml"
+loaderVersion="[1,)"
+license="AGPL-3.0-or-later"
+
+[[mods]]
+modId="huey_gametest"
+version="1.0.0"
+displayName="Huey gametests"
+description='''The Huey's gametests and photo booth.'''
+
+[[dependencies.huey_gametest]]
+    modId="huey"
+    type="required"
+    versionRange="[1.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.huey_gametest]]
+    modId="rotorcraft"
+    type="required"
+    versionRange="[1.0,)"
+    ordering="AFTER"
+    side="BOTH"
