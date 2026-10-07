@@ -13,15 +13,17 @@ A life-size Bell UH-1H for Rotorcraft (Rusty, 2026-10-06): data only, nesting Ro
 nests Vanilla Wheels). The plan is `~/.claude/plans/i-want-to-add-curious-locket.md`; D-0001 is the
 model, the origin and the sound.
 
-## Status (2026-10-07): built, gated and filmed; photos passed by Rusty
+## Status: 1.0.0 released 2026-10-07 in pack 1.75.0
 
 - Gate: 5 GameTests and the booth (10 checks) green (no JUnit: no Java beyond the tests).
 - Built: the model, both profiles (with Rotorcraft's hull and rotor radii), the chassis recipe and
   unlock, the lang, the rotor loop, the booth, the wiki page.
 - Rusty passed the booth photos on 2026-10-07 ("Looks good"), after the cockpit glass was made to
   meet the slant and the third-person cameras were set. Not done: the playtest on the 4070.
-- Nothing released; no GitHub repo yet (created at release on Rusty's word). Ships with Vanilla
-  Wheels 1.12.0, Rotorcraft 1.0.0 and the Chinook as pack 1.75.0.
+- Released 2026-10-07 in pack 1.75.0 on Rusty's "looks good, fix the latent key bug then release"
+  (the server repo's `knowledge/releases/pack-1.75.0.md`): public repo created then, the jar's sha1
+  `2402f6ea` on GitHub and on the server. Not yet seen: anyone flying it on the box. Rusty flew it
+  in the 4070 playtest before the release.
 
 ## Shape
 
