@@ -20,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT.parent / "tools/bbgen"))
 import bbgen  # noqa: E402  (the shared Blockbench writer: minecraft mods/tools/bbgen)
+import metric  # noqa: E402  (building it in metres, the shared way)
 
 ASSETS = ROOT / "src/main/resources/assets/huey"
 DATA = ROOT / "src/main/resources/data/huey"
@@ -94,78 +95,11 @@ def make_atlas() -> bbgen.TexelAtlas:
 
 # ------------------------------------------------------------- the helpers
 
-class Huey:
+class Huey(metric.Metric):
+    """The Huey's model, built in metres (the shared tools/bbgen/metric.py), its origin under the mast."""
+
     def __init__(self) -> None:
-        self.m = bbgen.Model("huey", make_atlas(), seed="huey/huey")
-
-    # A box in metres: x across (left +), y up, s along (aft +).
-    def box(self, folder, name, x0, x1, y0, y1, s0, s1, mat, faces=None):
-        self.m.cube(folder, name, [p(x0), p(y0), z(s1)], [p(x1), p(y1), z(s0)], mat, faces=faces)
-
-    def pair(self, folder, name, x0, x1, y0, y1, s0, s1, mat, faces=None):
-        """The box on the left (x0..x1 > 0) and its mirror on the right."""
-        self.m.mirror_x(folder, name, [p(x0), p(y0), z(s1)], [p(x1), p(y1), z(s0)], mat, faces=faces)
-
-    def across(self, folder, name, a, b, s0, s1, t, mat, mirror=True, grow=None):
-        """A plate on the cross-section's segment from a = (x, y) to b (metres), from station s0 to
-        s1, t thick, centred on the segment and lengthened by `grow` at each end to close the joints."""
-        grow = t / 2 if grow is None else grow
-        dx, dy = b[0] - a[0], b[1] - a[1]
-        length = math.hypot(dx, dy) + 2 * grow
-        cx, cy = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
-        angle = math.degrees(math.atan2(dy, dx))
-        frm = [p(cx - length / 2), p(cy - t / 2), z(s1)]
-        to = [p(cx + length / 2), p(cy + t / 2), z(s0)]
-        origin = [p(cx), p(cy), (z(s0) + z(s1)) / 2]
-        if mirror:
-            self.m.mirror_x(folder, name, frm, to, mat, rotation=(0, 0, angle), origin=origin)
-        else:
-            self.m.cube(folder, name, frm, to, mat, rotation=(0, 0, angle), origin=origin)
-
-    def along(self, folder, name, a, b, x0, x1, t, mat, mirror=False, grow=None, faces=None):
-        """A plate on the side view's segment from a = (s, y) to b (metres), across x0..x1, t thick."""
-        grow = t / 2 if grow is None else grow
-        ds, dy = b[0] - a[0], b[1] - a[1]
-        length = math.hypot(ds, dy) + 2 * grow
-        cs, cy = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
-        # Lying along -z (aft) before turning; turned about x so its far end rises by dy over ds.
-        angle = math.degrees(math.atan2(dy, ds))
-        frm = [p(x0), p(cy - t / 2), z(cs + length / 2)]
-        to = [p(x1), p(cy + t / 2), z(cs - length / 2)]
-        origin = [p((x0 + x1) / 2), p(cy), z(cs)]
-        if mirror:
-            self.m.mirror_x(folder, name, frm, to, mat, rotation=(angle, 0, 0), origin=origin, faces=faces)
-        else:
-            self.m.cube(folder, name, frm, to, mat, rotation=(angle, 0, 0), origin=origin, faces=faces)
-
-    def octagon(self, folder, name, centre, apothem, s0, s1, mat):
-        """A regular octagonal prism along the body from station s0 to s1, about centre = (x, y): four
-        bars across it, at 0, 45, 90 and 135 degrees, each as long as the octagon is across and as
-        thick as one side is long -- their union is the octagon."""
-        cx, cy = centre
-        half = apothem * math.tan(math.radians(22.5))
-        for k, turn in enumerate((0, 45, 90, 135)):
-            self.m.cube(folder, f"{name}{k}", [p(cx - apothem), p(cy - half), z(s1)], [p(cx + apothem), p(cy + half), z(s0)],
-                        mat, rotation=(0, 0, turn), origin=[p(cx), p(cy), (z(s0) + z(s1)) / 2])
-
-    def rod(self, folder, name, a, b, d, mat, mirror=False):
-        """A square rod d thick from a = (x, y, s) to b (metres)."""
-        ax, ay, az = p(a[0]), p(a[1]), z(a[2])
-        bx, by, bz = p(b[0]), p(b[1]), z(b[2])
-        dx, dy, dz = bx - ax, by - ay, bz - az
-        length = math.sqrt(dx * dx + dy * dy + dz * dz)
-        mid = [(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]
-        ux, uy, uz = dx / length, dy / length, dz / length
-        # A cube standing along +y, turned about x then y (X then Y then Z) to point along u.
-        pitch = math.degrees(math.atan2(math.hypot(ux, uz), uy))
-        yaw = math.degrees(math.atan2(ux, uz))
-        h = p(d) / 2
-        frm = [mid[0] - h, mid[1] - length / 2, mid[2] - h]
-        to = [mid[0] + h, mid[1] + length / 2, mid[2] + h]
-        if mirror:
-            self.m.mirror_x(folder, name, frm, to, mat, rotation=(pitch, yaw, 0), origin=mid)
-        else:
-            self.m.cube(folder, name, frm, to, mat, rotation=(pitch, yaw, 0), origin=mid)
+        super().__init__(bbgen.Model("huey", make_atlas(), seed="huey/huey"), MAST, PX)
 
 
 # ------------------------------------------------------------- the airframe
