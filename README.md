@@ -44,15 +44,16 @@ The model is built in metres from the UH-1H's published dimensions, its side vie
 Greg Goebel's public-domain profile (`devtools/art/reference/`, with `SOURCES.md`). The origin is on
 the ground under the mast, so it lands on its skids and turns about its rotor; its `hull` (six
 boxes: cabin, cowling, skids, boom, elevator, fin) is what meets the world in the air, and the
-rotors' radii keep it drawn while only a blade is in view. The windshield, the corner windows and
-the rounded roof edge meet along the windshield's slant a pixel at a time, under a pillar at each
-corner: glass cut square against a slant leaves a triangle of nothing at every band. The folders the
-profiles select by: `paint` (dyed), `glass` (drawn translucent), `cockpit` (the windshield's post,
-hidden from riders' own eyes), `rotor_main` and `rotor_tail` (spun by Rotorcraft), `spray_boom`
-(drawn while a sprayer is fitted), `lenses` (lit with the lights), `needle_speed` and `needle_fuel`
-(the airspeed and fuel gauges in front of the pilot). The rotor loop is cut from a CC0 recording of
-a UH-1 (`devtools/art/sounds/SOURCES.md`); its note runs from 0.62 spooling up to 1.04 at full
-speed, a rotor's, not a car's.
+rotors' radii keep it drawn while only a blade is in view and are how far a spinning rotor strikes
+what it touches (the tail rotor's lowest sweep is at a standing player's head). The windshield, the
+corner windows and the rounded roof edge meet along the windshield's slant a pixel at a time, under
+a pillar at each corner: glass cut square against a slant leaves a triangle of nothing at every
+band. The folders the profiles select by: `paint` (dyed), `glass` (drawn translucent), `cockpit`
+(the windshield's post, hidden from riders' own eyes), `rotor_main` and `rotor_tail` (spun by
+Rotorcraft), `spray_boom` (drawn while a sprayer is fitted), `lenses` (lit with the lights),
+`needle_speed` and `needle_fuel` (the airspeed and fuel gauges in front of the pilot). The rotor
+loop is cut from a CC0 recording of a UH-1 (`devtools/art/sounds/SOURCES.md`); its note runs from
+0.62 spooling up to 1.04 at full speed, a rotor's, not a car's.
 
 The shared tools it uses live beside the repo in `minecraft mods/tools/`: `bbgen` (the Blockbench
 writer and an offline renderer for judging the model) and `sound` (the loop cutter).
