@@ -99,6 +99,7 @@ public final class HueyBooth {
     private static UUID huey;
     private static UUID box;
     private static double ground;
+    private static final List<ServerPlayer> standIns = new ArrayList<>();
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -306,12 +307,54 @@ public final class HueyBooth {
             shoot(mc, "booth-cockpit");
             verdict("the booth's player flies it from the pilot's seat", () -> a != null && a.getControllingPassenger() == mc.player ? null : "pilot " + (a == null ? null : a.getControllingPassenger()));
         }));
+        // Third person from the pilot's seat, behind and then in front: Vanilla Wheels backs the
+        // camera off by the vehicle's length.
+        s.add(new Step(t += 2, () -> mc.options.setCameraType(CameraType.THIRD_PERSON_BACK)));
+        s.add(new Step(t += SETTLE, () -> shoot(mc, "booth-third-back")));
+        s.add(new Step(t += 2, () -> {
+            // Looking level: looking down in the game's front view puts the camera in the ground.
+            mc.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+            if (mc.player != null) {
+                mc.player.setXRot(0.0f);
+            }
+        }));
+        s.add(new Step(t += SETTLE, () -> {
+            shoot(mc, "booth-third-front");
+            mc.options.setCameraType(CameraType.FIRST_PERSON);
+        }));
+        // A passenger's own view: stand-in players in both pilots' seats, the booth's player in the next
+        // one. (Not armor stands: the game puts a player boarding behind a non-player first, at the controls.)
+        s.add(new Step(t += 2, () -> onServer(mc, sp -> withHuey(sp, a -> {
+            sp.stopRiding();
+            for (int i = 0; i < 2; i++) {
+                standIns.add(standIn(sp, "crew" + i, a.position()));
+                standIns.get(i).startRiding(a, true);
+            }
+            sp.startRiding(a, true);
+        }))));
+        s.add(new Step(t += 20, () -> {
+            if (mc.player != null) {
+                mc.player.setYRot(EAST);
+                mc.player.setXRot(4.0f);
+            }
+        }));
+        s.add(new Step(t += SETTLE, () -> {
+            Aircraft a = client(mc, huey);
+            shoot(mc, "booth-passenger");
+            verdict("the booth's player rides in a passenger's seat", () -> a != null && mc.player != null && mc.player.getVehicle() == a
+                    && a.getControllingPassenger() != mc.player ? null : "riding " + (mc.player == null ? null : mc.player.getVehicle()));
+        }));
         // --- hovering six up, rotors spun, seen from the ground -----------------------------------
         s.add(new Step(t += 2, () -> onServer(mc, sp -> {
             sp.stopRiding();
             sp.getAbilities().flying = true;
             sp.onUpdateAbilities();
             withHuey(sp, a -> {
+                a.ejectPassengers();
+                for (ServerPlayer crew : standIns) {
+                    crew.connection.disconnect(net.minecraft.network.chat.Component.literal("booth"));
+                }
+                standIns.clear();
                 ArmorStand stand = EntityType.ARMOR_STAND.create(sp.serverLevel());
                 if (stand != null) {
                     stand.setInvisible(true);
@@ -403,6 +446,15 @@ public final class HueyBooth {
                     : "fitted " + (a != null && a.sprayerFitted()) + ", spraying " + (a != null && a.spraying()));
             LOG.info("booth: spraying at {} over the ground", a == null ? null : a.getY() - ground);
         }));
+        s.add(new Step(t += 2, () -> mc.options.setCameraType(CameraType.THIRD_PERSON_FRONT)));
+        s.add(new Step(t += 10, () -> shoot(mc, "booth-third-front-flying")));
+        s.add(new Step(t += 2, () -> {
+            mc.options.setCameraType(CameraType.FIRST_PERSON);
+            if (mc.player != null) {
+                mc.player.setXRot(8.0f);
+            }
+        }));
+        s.add(new Step(t += 10, () -> shoot(mc, "booth-first-flying")));
         s.add(new Step(t += 50, () -> onServer(mc, sp -> {
             int grown = 0;
             for (int x = 14; x < 34; x++) {

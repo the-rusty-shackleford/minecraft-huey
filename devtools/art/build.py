@@ -234,31 +234,66 @@ def shell(h: Huey) -> None:
 
 
 def windshield(h: Huey) -> None:
-    """Two great panes over the instrument panel, a post between them, the corner windows down to
-    the doors, the brow, and the green windows in the roof."""
+    """The windshield, the corner windows down to the doors, the frame round them, and the green
+    windows in the roof.
+
+    Every piece meets its neighbour along the slant, a pixel at a time: the panes go across in bands a
+    pixel high, each as wide as the cabin is at its height (full width below the roof's round edge,
+    following it above); the corner windows run back from the slant in bands a pixel high; the round
+    edge's front is cut to the slant in slices. A pane cut square against a slant left a triangle of
+    nothing at every band (Rusty saw them as gaps between the panes); a pixel's step is too small to
+    see, and the pillar along the corner covers what is left of it.
+    """
     low, high = WINDSHIELD
+    (_, _), (_, _), (_, _), (x3, y3), (x4, y4), (_, _) = SECTION
 
     def at(y):
-        return (low[0] + (y - low[1]) / (high[1] - low[1]) * (high[0] - low[0]), y)
+        """The slant's station at height y."""
+        return low[0] + (y - low[1]) / (high[1] - low[1]) * (high[0] - low[0])
 
-    # In four bands, each as wide as the cabin is at its height, so no corner pokes out of the roof.
-    # They meet edge to edge with no end faces, so no line runs across the glass where they join.
-    bands = ((low[1], 1.70, 1.10), (1.70, 1.92, WAIST - 0.03), (1.92, 2.08, 1.07), (2.08, high[1], 0.96))
+    def edge(y):
+        """How wide the cabin is at height y: the side wall, then the round edge, then the roof."""
+        if y <= y3:
+            return WAIST
+        if y <= y4:
+            return x3 + (y - y3) / (y4 - y3) * (x4 - x3)
+        return x4
+
     joint = {"north": None, "south": None}
-    for i, (ya, yb, hw) in enumerate(bands):
-        h.along("glass/windshield", f"pane{i}_l", at(ya), at(yb), 0.05, hw, 0.04, "glass", grow=0.0, faces=joint)
-        h.along("glass/windshield", f"pane{i}_r", at(ya), at(yb), -hw, -0.05, 0.04, "glass", grow=0.0, faces=joint)
+    for i, (ya, yb) in enumerate(bands(low[1], high[1])):
+        hw = edge((ya + yb) / 2) - 0.015
+        h.along("glass/windshield", f"pane{i:02d}", (at(ya), ya), (at(yb), yb), -hw, hw, 0.04, "glass", grow=0.0, faces=joint)
     # The post is hidden from the riders' own eyes; Vanilla Wheels cuts cockpit faces before paint, so it
     # is never dyed and is drawn dark olive whatever the body's colour.
     h.along("cockpit/frame", "post", low, high, -0.05, 0.05, 0.08, "frame")
-    h.along("paint/windshield", "sill", (low[0] - 0.03, low[1] - 0.01), (low[0] + 0.03, low[1] + 0.03), -1.10, 1.10, 0.05, "paint")
+    h.along("paint/windshield", "sill", (low[0] - 0.03, low[1] - 0.01), (low[0] + 0.03, low[1] + 0.03), -WAIST, WAIST, 0.05, "paint")
     # The corner windows, upright in the sides' plane, from the slant back to the doors.
-    for i, (ya, yb) in enumerate(((low[1], 1.66), (1.66, 1.80), (1.80, 1.92))):
-        h.pair("glass/windshield", f"corner{i}", WAIST - 0.03, WAIST - 0.01, ya, yb, at(yb)[0] - 0.02, PILOT_DOOR[0], "glass",
+    for i, (ya, yb) in enumerate(bands(low[1], y3)):
+        h.pair("glass/windshield", f"corner{i:02d}", WAIST - 0.03, WAIST - 0.01, ya, yb, at((ya + yb) / 2), PILOT_DOOR[0], "glass",
                faces={"up": None, "down": None})
+    # The pillar along the corner, where the windshield's edge meets the corner windows' front.
+    h.along("paint/windshield", "pillar", (at(low[1]), low[1]), (at(y3), y3), WAIST - 0.05, WAIST + 0.012, 0.09, "paint", mirror=True)
+    # The pillar turns up the round edge to the roof: a rod along the corner, over the slices' ends.
+    h.rod("paint/windshield", "corner_rod", (x3 - 0.01, y3, at(y3)), (x4 - 0.01, y4, at(y4)), 0.08, "paint", mirror=True)
+    # The round edge over the cockpit, its front cut to the slant in slices.
+    n = 6
+    for k in range(n):
+        a = (x3 + (x4 - x3) * k / n, y3 + (y4 - y3) * k / n)
+        b = (x3 + (x4 - x3) * (k + 1) / n, y3 + (y4 - y3) * (k + 1) / n)
+        # Edge to edge, and ending where the cabin's own round edge begins: coplanar faces overlapping flicker.
+        h.across("paint/shell", f"brow{k}", a, b, at((a[1] + b[1]) / 2), high[0] - 0.02, SKIN, "paint", grow=0.0)
     # The green windows in the roof over the pilots.
     h.pair("glass/roof", "eyebrow", 0.08, 0.86, ROOF_Y - 0.05, ROOF_Y + 0.01, high[0] + 0.04, 1.74, "glass_green")
     h.box("paint/roof", "eyebrow_post", -0.08, 0.08, ROOF_Y - 0.06, ROOF_Y + 0.02, high[0] - 0.02, 1.74, "paint")
+
+
+def bands(y0: float, y1: float):
+    """The heights from y0 to y1 in bands a pixel high, the last one whatever is left."""
+    out, y = [], y0
+    while y < y1 - 1e-6:
+        out.append((y, min(y + 1.0 / PX, y1)))
+        y += 1.0 / PX
+    return out
 
 
 def aft(h: Huey) -> None:
@@ -542,6 +577,9 @@ def vehicle_profile() -> dict:
         "glass": {"group": "glass"},
         "cockpit": {"group": "cockpit"},
         "sounds": {"engine": "huey:rotor", "pitch": [0.62, 1.04], "volume": [0.35, 1.0]},
+        # Third person: 16 behind the pilot's eye (who sits in the nose) is five behind the tail, over it
+        # (at 14 its tail rotor crowded the corner); the length rule's 20 left the Huey a speck.
+        "camera": 16.0,
         "repair": {"ingredient": {"tag": "c:ingots/steel"}, "full_cost": 24},
     }
 

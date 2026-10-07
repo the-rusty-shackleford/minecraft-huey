@@ -217,6 +217,7 @@
       1.0
     ]
   },
+  "camera": 16.0,
   "repair": {
     "ingredient": {
       "tag": "c:ingots/steel"
