@@ -25,6 +25,10 @@ Nothing of the Huey's own changes. It nests Rotorcraft 1.1.0, which nests Vanill
 The gametests read `Keys.UP` and `Condition.MAX` (`286f35c`). Rusty: "plus the Huey and Chinook
 rebuilt on the new Rotorcraft (both are released, so they need version bumps)".
 
+Released 2026-10-08 in pack 1.78.0: tag `v1.1.1` at `5b5a7da`; the release gate green with 6
+GameTests and the booth's 12 checks (1.1.0's notes said 13, counting the completion line); sha1
+`3becf66a` on GitHub and on the server (the server repo's `knowledge/releases/pack-1.78.0.md`).
+
 ## Status: 1.1.0 released 2026-10-07 in pack 1.76.0
 
 - **1.1.0, the baggage store** (D-0002; Rusty, after flying it: storage "like the cars", "a double
