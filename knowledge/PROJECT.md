@@ -13,6 +13,18 @@ A life-size Bell UH-1H for Rotorcraft (Rusty, 2026-10-06): data only, nesting Ro
 nests Vanilla Wheels). The plan is `~/.claude/plans/i-want-to-add-curious-locket.md`; D-0001 is the
 model, the origin and the sound.
 
+## 1.1.1 — rebuilt on Rotorcraft 1.1.0, with the submarines
+
+Nothing of the Huey's own changes. It nests Rotorcraft 1.1.0, which nests Vanilla Wheels 1.13.0:
+- the hull, crash judging and the keys are Vanilla Wheels' now (its D-0031);
+- a key acts once a press (its D-0032);
+- the boarding line names R, not Shift (its D-0033);
+- a broken Huey set down from its item stays to be mended (Rotorcraft's D-0004; a friend's Huey could
+  not be).
+
+The gametests read `Keys.UP` and `Condition.MAX` (`286f35c`). Rusty: "plus the Huey and Chinook
+rebuilt on the new Rotorcraft (both are released, so they need version bumps)".
+
 ## Status: 1.1.0 released 2026-10-07 in pack 1.76.0
 
 - **1.1.0, the baggage store** (D-0002; Rusty, after flying it: storage "like the cars", "a double
