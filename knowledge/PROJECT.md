@@ -13,6 +13,13 @@ A life-size Bell UH-1H for Rotorcraft (Rusty, 2026-10-06): data only, nesting Ro
 nests Vanilla Wheels). The plan is `~/.claude/plans/i-want-to-add-curious-locket.md`; D-0001 is the
 model, the origin and the sound.
 
+## 1.2.0 — built and gated 2026-10-10, unreleased (durability 10, on Rotorcraft 1.2.0)
+
+Its profile names `durability` 10 (Vanilla Wheels 1.14.0's D-0034): nine pistol rounds, five rifle
+rounds or two to three rockets wreck it, where one did. It nests Rotorcraft 1.2.0 (the collective
+lever and its dial, Rotorcraft's D-0005; the gametests and the booth put the lever in its detent where
+they hover). Flown in the 4070 playtest, 2026-10-10 ("Looks good"). Gate: the release gate (2026-10-10, `clean build --no-build-cache`) green with 6 gametests and the booth's 12 checks.
+
 ## 1.1.1 — rebuilt on Rotorcraft 1.1.0, with the submarines
 
 Nothing of the Huey's own changes. It nests Rotorcraft 1.1.0, which nests Vanilla Wheels 1.13.0:

@@ -20,10 +20,12 @@ repairs in Vanilla Wheels'.
 
 ## Flying it
 
-Rotorcraft's keys: Space climbs, Left Shift descends, R gets out (within three blocks of the
-ground), G hooks and lets go a sling load, V switches the crop sprayer, H the lights. The rotor
-spools up for three seconds before it lifts. Nobody aboard is ever hurt by flying; crashes wear the
-helicopter. In third person the camera stands 16 blocks behind the pilot's eye (the profile's
+Rotorcraft's keys: Space and Left Shift move the collective lever, which stays where it is let
+go and holds the height in its detent (Rotorcraft 1.2.0's D-0005), W and S tilt the stick, R gets
+out (within three blocks of the ground), G hooks and lets go a sling load, V switches the crop
+sprayer, H the lights. The rotor spools up for three seconds before it lifts. Nobody aboard is ever
+hurt by flying; crashes wear the helicopter, and blows wear it a tenth as much as a point of damage
+wears a boat (its `durability`, 10, Vanilla Wheels' D-0034: nine pistol rounds to a wreck). In third person the camera stands 16 blocks behind the pilot's eye (the profile's
 `camera`; Vanilla Wheels' length rule would put it 20 back, the Huey a speck in the middle of the
 screen), five behind the tail and over it.
 

@@ -21,6 +21,7 @@ import com.chunkworks.rotorcraft.Aircraft;
 import com.chunkworks.rotorcraft.SlungLoad;
 import com.chunkworks.rotorcraft.api.AircraftProfile;
 import com.chunkworks.rotorcraft.api.Rotorcraft;
+import com.chunkworks.rotorcraft.domain.Flight;
 import com.chunkworks.rotorcraft.domain.FlightInput;
 import com.chunkworks.vanillawheels.ModContent;
 import com.chunkworks.vanillawheels.Vehicle;
@@ -134,6 +135,16 @@ public final class HueyGameTests {
         return new FlightInput(forward, turn, lift, true, false, 0.0);
     }
 
+    /**
+     * effects: the script lets go of the collective with it in its detent, as a pilot brings it there
+     * to hold the height, and flies by {@code forward} and {@code turn}: what letting go of the
+     * collective did before Rotorcraft 1.2.0's lever (its D-0005)
+     */
+    private static void level(Aircraft a, int forward, int turn) {
+        a.setScriptedFlight(fly(forward, turn, 0));
+        a.setCollective(Flight.HOVER);
+    }
+
     @GameTest(template = "pad", timeoutTicks = 40)
     public void theProfilesMakeItAnAircraftOfEightSeatsOnSkids(GameTestHelper helper) {
         var registries = helper.getLevel().registryAccess();
@@ -141,6 +152,7 @@ public final class HueyGameTests {
         helper.assertTrue(vehicle.isPresent(), "huey:huey is a vehicle");
         VehicleProfile p = vehicle.get();
         helper.assertValueEqual(p.seats().size(), 8, "a pilot, a copilot and six");
+        helper.assertValueEqual(p.durability(), 10.0, "nine pistol rounds to a wreck (Vanilla Wheels' D-0034)");
         helper.assertTrue(p.seats().get(0).driver() && p.seats().get(0).at().x() < 0, "the pilot flies from the right-hand seat");
         helper.assertTrue(!p.wheels().drawn(), "skids: no wheels drawn");
         helper.assertValueEqual(p.wheels().positions().size(), 4, "standing on the skids' two ends each");
@@ -239,9 +251,9 @@ public final class HueyGameTests {
         a.setScriptedFlight(fly(0, 0, 1));
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertTrue(a.getY() > floorY + 6.0, "up:" + trace))
-                .thenExecute(() -> a.setScriptedFlight(fly(1, 0, 0)))
+                .thenExecute(() -> level(a, 1, 0))
                 .thenWaitUntil(() -> helper.assertTrue(a.getZ() - start.z > 12.0, "across the pad:" + trace))
-                .thenExecute(() -> a.setScriptedFlight(fly(0, 1, 0)))
+                .thenExecute(() -> level(a, 0, 1))
                 .thenWaitUntil(() -> helper.assertTrue(Math.abs(net.minecraft.util.Mth.wrapDegrees(a.getYRot() - yaw0)) > 85.0, "turned:" + trace))
                 .thenExecute(() -> a.setScriptedFlight(fly(0, 0, -1)))
                 .thenWaitUntil(() -> helper.assertTrue(a.onGround() && a.getY() < floorY + 0.01, "landed:" + trace))
@@ -276,7 +288,7 @@ public final class HueyGameTests {
         a.setScriptedFlight(fly(0, 0, 1));
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertTrue(a.getY() > floorY + 5.0, "up"))
-                .thenExecute(() -> a.setScriptedFlight(fly(0, 0, 0)))
+                .thenExecute(() -> level(a, 0, 0))
                 .thenIdle(40)
                 .thenExecute(() -> {
                     // The container under the hovering hook, a cow behind its doors and apples in a chest.
@@ -297,15 +309,15 @@ public final class HueyGameTests {
                     a.setScriptedFlight(fly(0, 0, 1));
                 })
                 .thenWaitUntil(() -> helper.assertTrue(box[0].getY() > floorY + 2.0, "the container lifted off:" + trace))
-                .thenExecute(() -> a.setScriptedFlight(fly(1, 0, 0)))
+                .thenExecute(() -> level(a, 1, 0))
                 .thenWaitUntil(() -> helper.assertTrue(box[0].getZ() > from[0] + 8.0, "carried south:" + trace))
-                .thenExecute(() -> a.setScriptedFlight(fly(0, 0, 0)))
+                .thenExecute(() -> level(a, 0, 0))
                 .thenIdle(80)
                 .thenExecute(() -> a.setScriptedFlight(fly(0, 0, -1)))
                 .thenWaitUntil(() -> helper.assertTrue(box[0].resting(), "set down:" + trace))
                 .thenIdle(40)
                 .thenExecute(() -> {
-                    a.setScriptedFlight(fly(0, 0, 0));
+                    level(a, 0, 0);
                     a.hookKey(pilot);
                     helper.assertTrue(a.trailer() == null, "let go on the ground");
                     helper.assertValueEqual(box[0].condition(), com.chunkworks.vanillawheels.domain.Condition.MAX, "set down whole:" + trace);

@@ -33,14 +33,16 @@ up before it will lift.
 |---|---|
 | **W / S** | fly forward / back |
 | **A / D** | turn |
-| **Space** | climb |
-| **Left Shift** | descend (it slows down by itself near the ground, so holding it all the way down always lands softly) |
+| **Space** | collective up: climb |
+| **Left Shift** | collective down: descend (it slows down by itself near the ground, so pulling it all the way down always lands softly) |
 | **R** | get out (only within three blocks of the ground) |
 | **G** | hook or let go a load |
 | **V** | crop sprayer on / off |
 | **H** | lights |
 
-Let go of everything and it hovers in place. **Nobody aboard is ever hurt by flying**, but flying
+The collective is a lever that stays where you leave it: in its middle notch (the white tick on
+the dial over your hotbar) it hovers in place; above it climbs, below it descends. Hold W or S longer
+to go faster. **Nobody aboard is ever hurt by flying**, but flying
 into things damages the helicopter: repair it like any vehicle, with **steel ingots**. If it runs
 out of fuel in the air it glides down gently on its spinning rotor.
 
@@ -64,7 +66,7 @@ are aboard, as in the cars.
 
 Load the container on the ground (animals in through its doors, things in its two chests), hover
 over it until the hook is just above its ring, and press **G**. Climb and it lifts off on its rope.
-Hold **Shift** to set it down softly, then press **G** again to let go.
+Pull the lever down with **Shift** to set it down softly, then press **G** again to let go.
 
 ![The Huey carrying the Sling Container](img/sling.webp)
 
