@@ -13,6 +13,15 @@ A life-size Bell UH-1H for Rotorcraft (Rusty, 2026-10-06): data only, nesting Ro
 nests Vanilla Wheels). The plan is `~/.claude/plans/i-want-to-add-curious-locket.md`; D-0001 is the
 model, the origin and the sound.
 
+## 1.2.1 — rebuilt on Rotorcraft 1.2.1 and Vanilla Wheels 1.16.0, 2026-10-11, unreleased
+
+Nothing of the Huey's own changes. It nests Rotorcraft 1.2.1, which nests Vanilla Wheels 1.16.0
+(its D-0038): a rider keeps their seat and nobody is handed the controls when the pilot is gone (the
+aircraft comes down by itself; U takes them), and a crew member logging out in the air is seated again
+on logging back in, or stood on the ground if the aircraft is gone. From OtatopMalloy's death in a Huey
+on the box on 2026-10-11. The release gate (`clean build --no-build-cache`, booth in software on `:7`)
+green with 6 GameTests and the booth's 12 checks. Not released (Rusty's word).
+
 ## 1.2.0 — released 2026-10-11 in pack 1.82.0 (durability 10, on Rotorcraft 1.2.0)
 
 Released on Rusty's go ("Release the 2026-10-10 batch and Survivalist Armor 0.2.0. This is my go."), tag `v1.2.0` at `3e56af4`, the release gate (2026-10-11, `clean build --no-build-cache`) green again on that commit; sha1 `fee92313` on GitHub and on the server (the server repo's `knowledge/releases/pack-1.82.0.md`). Not yet seen in play on the box.
