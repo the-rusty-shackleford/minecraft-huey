@@ -228,7 +228,10 @@
     "group": "glass"
   },
   "cockpit": {
-    "group": "cockpit"
+    "group": [
+      "cockpit",
+      "glass"
+    ]
   },
   "sounds": {
     "engine": "huey:rotor",

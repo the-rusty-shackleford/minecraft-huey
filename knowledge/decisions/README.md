@@ -14,3 +14,4 @@ tags: [index]
 |----|-------|
 | D-0001 | A life-size UH-1H, modelled by script from published dimensions, its origin under the mast |
 | D-0002 | A double chest's room hidden in the boom, opened at a hatch on either side |
+| D-0003 | The rotor heard 200 blocks off; the windows are the cockpit's glass, not drawn for your own eyes |

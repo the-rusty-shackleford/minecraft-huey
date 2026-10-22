@@ -44,7 +44,9 @@ The collective is a lever that stays where you leave it: in its middle notch (th
 the dial over your hotbar) it hovers in place; above it climbs, below it descends. Hold W or S longer
 to go faster. **Nobody aboard is ever hurt by flying**, but flying
 into things damages the helicopter: repair it like any vehicle, with **steel ingots**. If it runs
-out of fuel in the air it glides down gently on its spinning rotor.
+out of fuel in the air it glides down gently on its spinning rotor. You can hear a Huey from **200
+blocks** away, if that far is loaded for you. From inside, the windows are clear: you look straight
+out, and other people still see glass.
 
 ![The pilot's view](img/cockpit.webp)
 

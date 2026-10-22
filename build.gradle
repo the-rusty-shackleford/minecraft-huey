@@ -112,14 +112,14 @@ dependencies {
     // and Materials is required separately through Vanilla Wheels.
     jarJar(implementation("com.chunkworks.rotorcraft:rotorcraft")) {
         version {
-            strictly "[1.2.1,2.0)"
-            prefer "1.2.1"
+            strictly "[1.3.0,2.0)"
+            prefer "1.3.0"
         }
     }
 
     gametestImplementation sourceSets.main.output
     // The tests reach into Vanilla Wheels' API, which Rotorcraft keeps to itself at compile time.
-    gametestImplementation("com.chunkworks.vanillawheels:vanillawheels:1.16.0")
+    gametestImplementation("com.chunkworks.vanillawheels:vanillawheels:1.18.3")
 }
 
 tasks.named('runGameTestServer') { task ->

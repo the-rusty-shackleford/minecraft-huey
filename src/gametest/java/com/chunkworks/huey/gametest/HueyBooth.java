@@ -432,6 +432,15 @@ public final class HueyBooth {
             Aircraft a = client(mc, huey);
             shoot(mc, "booth-hover");
             verdict("its rotor turns at speed, seen by the client", () -> a != null && a.rotor() > 0.9f ? null : "rotor " + (a == null ? null : a.rotor()));
+            // The loop is the aircraft's own: started before the profile reached the client, it was the
+            // car's petrol engine at sixteen blocks (Vanilla Wheels' D-0045), and third person was out of earshot.
+            verdict("the loop playing is its own rotor, heard 200 blocks off", () -> {
+                var loop = a == null ? null : com.chunkworks.vanillawheels.client.Controls.engineOf(a);
+                if (loop == null) return "no engine loop";
+                var event = mc.getSoundManager().getSoundEvent(loop.getLocation());
+                int range = event == null ? -1 : event.getSound(net.minecraft.util.RandomSource.create()).getAttenuationDistance();
+                return loop.getLocation().toString().equals("huey:rotor") && range == 200 ? null : "loop " + loop.getLocation() + " at " + range;
+            });
             verdict("and it is off the ground", () -> a != null && a.getY() > ground + 4.0 ? null : "height " + (a == null ? null : a.getY() - ground));
         }));
         // --- the Sling Container on its hook --------------------------------------------------------

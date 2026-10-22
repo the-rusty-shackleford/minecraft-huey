@@ -584,6 +584,7 @@ def vehicle_profile() -> dict:
         "engine": {"max_speed": 1.4, "acceleration": 0.03, "reverse_speed": 0.4, "brake": 0.04},
         "climb": 0.5,
         "mass": 2.2,
+        "durability": 10.0,
         "fuel": {"capacity": 36000},
         # The baggage store: a double chest's six rows, hidden in the boom, its long side along it.
         # A click on either hatch reaches it through the boom's hit box; a rider's inventory key opens it.
@@ -598,7 +599,9 @@ def vehicle_profile() -> dict:
                        "part": {"group": "lenses"}, "range": 16},
         "paint": {"part": {"group": "paint"}, "default": "green", "factory": "#4f5536"},
         "glass": {"group": "glass"},
-        "cockpit": {"group": "cockpit"},
+        # The glass is the cockpit's too (Vanilla Wheels' D-0031): not drawn for a rider looking out through
+        # their own eyes. Faded in front of the eye, Iris drew the pane, not the world behind it, under shaders.
+        "cockpit": {"group": ["cockpit", "glass"]},
         "sounds": {"engine": "huey:rotor", "pitch": [0.62, 1.04], "volume": [0.35, 1.0]},
         # Third person: 16 behind the pilot's eye (who sits in the nose) is five behind the tail, over it
         # (at 14 its tail rotor crowded the corner); the length rule's 20 left the Huey a speck.
@@ -657,8 +660,9 @@ def unlock(recipe: str, tag: str) -> dict:
 
 
 SOUNDS_JSON = {
-    # Heard a long way off; the loop's own level is set by the profile's sounds.volume.
-    "rotor": {"sounds": [{"name": "huey:rotor", "attenuation_distance": 64}]},
+    # Heard 200 blocks off, fading evenly to nothing there (Rusty, 2026-10-22, on a friend's ask); the
+    # loop's own level is set by the profile's sounds.volume.
+    "rotor": {"sounds": [{"name": "huey:rotor", "attenuation_distance": 200}]},
 }
 
 LANG = {

@@ -3,7 +3,7 @@
     "sounds": [
       {
         "name": "huey:rotor",
-        "attenuation_distance": 64
+        "attenuation_distance": 200
       }
     ]
   }

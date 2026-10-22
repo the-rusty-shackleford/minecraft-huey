@@ -13,6 +13,16 @@ A life-size Bell UH-1H for Rotorcraft (Rusty, 2026-10-06): data only, nesting Ro
 nests Vanilla Wheels). The plan is `~/.claude/plans/i-want-to-add-curious-locket.md`; D-0001 is the
 model, the origin and the sound.
 
+## 1.3.0 — built 2026-10-22, not released (heard from 200 blocks, clear windows; D-0003)
+
+From Rusty's friends' asks, 2026-10-22: the rotor carries 200 blocks (it was 64; Rusty's pick), and
+the glass is the cockpit's, not drawn for your own eyes: under Complementary the windows showed a flat
+banded sky with no clouds (photographed on the 4070, old and new). The third-person silence they
+reported was Vanilla Wheels' (its D-0045: the car's petrol loop at sixteen blocks); on 1.18.3 the booth
+checks the loop is `huey:rotor` at 200. Nests Rotorcraft 1.3.0 (the fuel rim, Space off the lift) and
+through it Vanilla Wheels 1.18.3 (items used aboard). `build.py` now writes `durability` 10, which 1.2.0
+had put in the profile by hand. Release gate green: 6 GameTests, 13 booth checks.
+
 ## 1.2.1 — rebuilt on Rotorcraft 1.2.1 and Vanilla Wheels 1.16.0, released 2026-10-12 in pack 1.85.0
 
 Nothing of the Huey's own changes. It nests Rotorcraft 1.2.1, which nests Vanilla Wheels 1.16.0
